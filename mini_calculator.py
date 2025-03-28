@@ -1,42 +1,46 @@
 import tkinter as tk
 
-def on_click(button_text):
-    """Handles button clicks and updates the entry field."""
-    if button_text == "=":
+def on_button_click(event):
+    text = event.widget.cget("text")
+    if text == "=":
         try:
-            result = eval(entry_var.get())  # Evaluate the expression
-            entry_var.set(result)
-        except:
-            entry_var.set("Error")  # Display error for invalid input
-    elif button_text == "C":
-        entry_var.set("")  # Clear the input field
+            result = eval(entry.get())
+            entry.delete(0, tk.END)
+            entry.insert(tk.END, str(result))
+        except Exception as e:
+            entry.delete(0, tk.END)
+            entry.insert(tk.END, "Error")
+    elif text == "C":
+        entry.delete(0, tk.END)
     else:
-        entry_var.set(entry_var.get() + button_text)  # Append button text
+        entry.insert(tk.END, text)
 
-# Create the main window
 root = tk.Tk()
-root.title("Mini Calculator")
-root.geometry("350x500")  # Set window size
+root.title("Simple Calculator")
 
-# Entry field to display calculations
-entry_var = tk.StringVar()
-entry = tk.Entry(root, textvariable=entry_var, font=("Arial", 24), justify='right', bd=10, relief=tk.GROOVE)
-entry.grid(row=0, column=0, columnspan=4, ipadx=8, ipady=8)
+entry = tk.Entry(root, font=("Helvetica", 16))
+entry.pack(fill=tk.BOTH, expand=True)
 
-# Button layout
+button_frame = tk.Frame(root)
+button_frame.pack()
+
 buttons = [
-    ('7', '8', '9', '/'),
-    ('4', '5', '6', '*'),
-    ('1', '2', '3', '-'),
-    ('C', '0', '=', '+')
+    "7", "8", "9", "/",
+    "4", "5", "6", "*",
+    "1", "2", "3", "-",
+    "C", "0", "=", "+",
 ]
 
-# Create buttons and place them in the window
-for r, row in enumerate(buttons):
-    for c, text in enumerate(row):
-        btn = tk.Button(root, text=text, font=("Arial", 20), command=lambda t=text: on_click(t), width=6, height=2)
-        btn.grid(row=r+1, column=c, padx=5, pady=5)
+row = 1
+col = 0
+for button_text in buttons:
+    button = tk.Button(button_frame, text=button_text, font=("Helvetica", 16), padx=20, pady=20)
+    button.grid(row=row, column=col)
+    col += 1
+    if col > 3:
+        col = 0
+        row += 1
 
-# Run the main event loop
+    button.bind("<Button-1>", on_button_click)
+
 root.mainloop()
-
